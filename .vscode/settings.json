@@ -1,0 +1,5 @@
+{
+    "appService.preDeployTask": "publish-release",
+    "appService.deploySubpath": "bin\\Release\\net9.0\\publish",
+    "appService.defaultWebAppToDeploy": "/subscriptions/9cca4999-f13b-42a8-a54d-6600c60f2e69/resourceGroups/appsvc_windows_westeurope/providers/Microsoft.Web/sites/graphmcp"
+}
