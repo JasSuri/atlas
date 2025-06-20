@@ -1,6 +1,7 @@
-# Microsoft Graph API MCP Server Setup Guide
+# Microsoft Graph API MCP Server Setup Guide (Unofficial)
 
 This guide will help you set up a Model Context Protocol (MCP) server that provides access to Microsoft Graph API using Entra ID authentication with On-Behalf-Of (OBO) flow.
+This sample uses Microsoft Graph API as the API layer for MCP to interface with, as an example.
 
 ## Table of Contents
 1. [Prerequisites](#prerequisites)
