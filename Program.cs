@@ -78,7 +78,7 @@ builder.Services.AddAuthentication(options =>
         
         var metadata = new ProtectedResourceMetadata
         {
-            Resource = new Uri($"{baseUrl}/sse"),
+            Resource = new Uri($"{baseUrl}/"),
             BearerMethodsSupported = { "header" },
             ResourceDocumentation = new Uri("https://docs.example.com/api/mcp"),
             AuthorizationServers = { new Uri($"{instance}{tenantId}/v2.0") }
