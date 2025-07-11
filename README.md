@@ -1,9 +1,9 @@
-# Microsoft Graph API MCP Server Setup Guide
+# Atlas
 
-This guide will help you set up a Model Context Protocol (MCP) server that provides access to Microsoft Graph API using Entra ID authentication with On-Behalf-Of (OBO) flow.
+This guide will help you set up an Atlas MCP server that provides access to Microsoft Graph API using Entra ID authentication with On-Behalf-Of (OBO) flow.
 This sample uses Microsoft Graph API as the API layer for MCP to interface with, as an example.
 
-<img src="https://github.com/jassuri/custom-graph-mcp/blob/main/assets/graph-mcp-demo.gif?raw=true" alt="Graph MCP Demo - list users and apps demo" width="1000"/>
+<img src="https://github.com/jassuri/custom-graph-mcp/blob/main/assets/graph-mcp-demo.gif?raw=true" alt="Atlas MCP Demo - list users and apps demo" width="1000"/>
 
 
 ## Table of Contents
@@ -32,7 +32,7 @@ This sample uses Microsoft Graph API as the API layer for MCP to interface with,
 2. **Navigate to Azure Active Directory** → **App registrations**
 3. **Click "New registration"**
 4. **Fill in the details**:
-   - **Name**: `MCP Graph API Server`
+   - **Name**: `Atlas MCP Server`
    - **Supported account types**:
      - `Accounts in this organizational directory only` (Single tenant)
    - **Redirect URI**: Leave blank for now
