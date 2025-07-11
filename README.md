@@ -5,6 +5,18 @@ This sample uses Microsoft Graph API as the API layer for MCP to interface with,
 
 <img src="https://github.com/jassuri/custom-graph-mcp/blob/main/assets/graph-mcp-demo.gif?raw=true" alt="Atlas MCP Demo - list users and apps demo" width="1000"/>
 
+## Connect to an existing instance
+
+You can use this Atlas MCP server to test the experience in Visual Studio Code:
+
+```json
+   "graph-mcp": {
+         "url": "https://graph-mcp.azurewebsites.net/"
+   } 
+```
+
+> ⚠️ **Warning:** All tenant data accessed via Microsoft Graph API will pass through this Atlas MCP server. Ensure you trust the deployment and review security best practices before use. It is recommended to connect only non-production Entra ID tenants. For your own instance of Atlas, follow the instructions below.
+
 
 ## Table of Contents
 1. [Prerequisites](#prerequisites)
