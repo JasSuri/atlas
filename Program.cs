@@ -6,6 +6,7 @@ using ModelContextProtocol.Authentication;
 using ProtectedMCPServer.Tools;
 using System.Net.Http.Headers;
 using System.Security.Claims;
+using Microsoft.Extensions.Options;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -15,15 +16,8 @@ var clientId = builder.Configuration["AzureAd:ClientId"] ?? "5e00b345-a805-42a0-
 var clientSecret = builder.Configuration["AzureAd:ClientSecret"]; // Should be set in Azure App Service configuration
 var instance = builder.Configuration["AzureAd:Instance"] ?? "https://login.microsoftonline.com/";
 
-// Configure URLs - use localhost for development, auto-detect for Azure
+// Configure URLs - use localhost for development, auto-detect for production
 var isDevelopment = builder.Environment.IsDevelopment();
-var serverUrl = "http://localhost:7071/"; // Always use localhost:7071 for local development
-
-// Override serverUrl for production/Azure
-if (!isDevelopment || builder.Configuration["ASPNETCORE_ENVIRONMENT"] == "Production")
-{
-    serverUrl = null; // Let Azure determine the URL
-}
 
 builder.Services.AddAuthentication(options =>
 {
@@ -35,7 +29,7 @@ builder.Services.AddAuthentication(options =>
     options.Authority = $"{instance}{tenantId}/v2.0";
     options.TokenValidationParameters = new TokenValidationParameters
     {
-        ValidateIssuer = true,
+        ValidateIssuer = false,
         ValidateAudience = true,
         ValidateLifetime = true,
         ValidateIssuerSigningKey = true,
@@ -68,34 +62,38 @@ builder.Services.AddAuthentication(options =>
         }
     };
 })
+
 .AddMcp(options =>
 {
-    options.ProtectedResourceMetadataProvider = context =>
+    // Default configuration - will be updated dynamically
+    options.ResourceMetadata = new()
     {
-        // Get the current request's base URL for dynamic URL generation in Azure
-        var request = context.Request;
-        var baseUrl = $"{request.Scheme}://{request.Host}";
-        
-        var metadata = new ProtectedResourceMetadata
-        {
-            Resource = new Uri($"{baseUrl}/"),
-            BearerMethodsSupported = { "header" },
-            ResourceDocumentation = new Uri("https://docs.example.com/api/mcp"),
-            AuthorizationServers = { new Uri($"{instance}{tenantId}/v2.0") }
-        };
-
-        metadata.ScopesSupported.AddRange([
-            $"api://{clientId}/user.read"
-        ]);
-
-        return metadata;
+        Resource = new Uri("https://localhost/"),
+        ResourceDocumentation = new Uri("https://docs.example.com/api/weather"),
+        AuthorizationServers = { new Uri($"{instance}{tenantId}/v2.0") },
+        ScopesSupported = [$"api://{clientId}/user.read"],
     };
 });
+
+// Add a post-configure options to dynamically set the Resource URL based on HTTP context
+builder.Services.AddSingleton<IPostConfigureOptions<McpAuthenticationOptions>>(serviceProvider =>
+    new PostConfigureOptions<McpAuthenticationOptions>(null, options =>
+    {
+        var httpContextAccessor = serviceProvider.GetService<IHttpContextAccessor>();
+        if (httpContextAccessor?.HttpContext != null && options.ResourceMetadata != null)
+        {
+            var request = httpContextAccessor.HttpContext.Request;
+            var scheme = request.Scheme;
+            var host = request.Host.Value;
+            var baseUrl = $"{scheme}://{host}";
+            
+            options.ResourceMetadata.Resource = new Uri($"{baseUrl}/");
+        }
+    }));
 
 builder.Services.AddAuthorization();
 
 builder.Services.AddHttpContextAccessor();
-builder.Services.AddScoped<WeatherTools>();
 builder.Services.AddScoped<MsGraphAPITool>();
 
 builder.Services.AddMcpServer()
@@ -124,17 +122,11 @@ app.MapMcp().RequireAuthorization();
 // Always show startup info
 Console.WriteLine("Starting MCP server with authorization");
 
-if (!string.IsNullOrEmpty(serverUrl))
+if (isDevelopment)
 {
-    Console.WriteLine($"Local development URL: {serverUrl}");
-    Console.WriteLine($"PRM Document URL: {serverUrl}.well-known/oauth-protected-resource");
-    Console.WriteLine("Press Ctrl+C to stop the server");
-    app.Run(serverUrl);
+    app.Run("http://localhost:7071");
 }
 else
 {
-    Console.WriteLine("Production mode - using default Azure URLs");
-    Console.WriteLine("PRM Document URL: /.well-known/oauth-protected-resource");
-    Console.WriteLine("Press Ctrl+C to stop the server");
     app.Run();
 }

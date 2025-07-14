@@ -156,7 +156,8 @@ public sealed class MsGraphAPITool
     [McpServerTool, Description("Make a universal Microsoft Graph API call to any endpoint using On-Behalf-Of flow.")]
     public async Task<string> CallGraphApiEndpoint(
         [Description("The Graph API endpoint to call (e.g., '/v1.0/me', '/v1.0/users', '/v1.0/me/messages'). Include the version prefix.")] string endpoint,
-        [Description("HTTP method to use (GET, POST, PUT, PATCH, DELETE). Defaults to GET.")] string method = "GET")
+        [Description("HTTP method to use (GET, POST, PUT, PATCH, DELETE). Defaults to GET.")] string method = "GET",
+        [Description("Optional request body for POST, PUT, or PATCH methods. Should be a JSON string.")] string? body = null)
     {
         var userToken = GetBearerToken();
         if (string.IsNullOrEmpty(userToken))
@@ -194,17 +195,23 @@ public sealed class MsGraphAPITool
             }
 
             var client = _httpClientFactory.CreateClient("GraphApi");
-            
             // Add the Graph API token to the request
             client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", graphToken);
+
+            // Prepare content for methods that support a body
+            StringContent? content = null;
+            if (method is "POST" or "PUT" or "PATCH")
+            {
+                content = new StringContent(string.IsNullOrEmpty(body) ? "{}" : body, System.Text.Encoding.UTF8, "application/json");
+            }
 
             // Make the request to the specified Graph API endpoint
             HttpResponseMessage response = method switch
             {
                 "GET" => await client.GetAsync(endpoint),
-                "POST" => await client.PostAsync(endpoint, new StringContent("{}", System.Text.Encoding.UTF8, "application/json")),
-                "PUT" => await client.PutAsync(endpoint, new StringContent("{}", System.Text.Encoding.UTF8, "application/json")),
-                "PATCH" => await client.PatchAsync(endpoint, new StringContent("{}", System.Text.Encoding.UTF8, "application/json")),
+                "POST" => await client.PostAsync(endpoint, content!),
+                "PUT" => await client.PutAsync(endpoint, content!),
+                "PATCH" => await client.PatchAsync(endpoint, content!),
                 "DELETE" => await client.DeleteAsync(endpoint),
                 _ => throw new ArgumentException($"Unsupported HTTP method: {method}")
             };

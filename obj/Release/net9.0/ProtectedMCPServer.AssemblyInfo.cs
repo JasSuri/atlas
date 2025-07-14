@@ -12,9 +12,9 @@ using System.Reflection;
 
 [assembly: Microsoft.Extensions.Configuration.UserSecrets.UserSecretsIdAttribute("783daef3-9c45-408d-a1d3-7caf44724f39")]
 [assembly: System.Reflection.AssemblyCompanyAttribute("ProtectedMCPServer")]
-[assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
+[assembly: System.Reflection.AssemblyConfigurationAttribute("Release")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+db86762e20627de19cc65eaaf7226d4fc3772410")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+08dc594ffb0f93d1648263bcc4db9c91620eb3fa")]
 [assembly: System.Reflection.AssemblyProductAttribute("ProtectedMCPServer")]
 [assembly: System.Reflection.AssemblyTitleAttribute("ProtectedMCPServer")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

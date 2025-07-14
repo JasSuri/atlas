@@ -8,8 +8,11 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\src\ModelContextProtocol.AspNetCore\ModelContextProtocol.AspNetCore.csproj" />
-    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" />
+    <PackageReference Include="ModelContextProtocol.AspNetCore" Version="0.3.0-preview.2" />
+    <!--<ProjectReference Include="..\..\src\ModelContextProtocol.AspNetCore\ModelContextProtocol.AspNetCore.csproj" />-->
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer">
+      <Version>9.0.7</Version>
+    </PackageReference>
   </ItemGroup>
 
 </Project>
