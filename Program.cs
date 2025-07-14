@@ -29,7 +29,7 @@ builder.Services.AddAuthentication(options =>
     options.Authority = $"{instance}{tenantId}/v2.0";
     options.TokenValidationParameters = new TokenValidationParameters
     {
-        ValidateIssuer = false,
+        ValidateIssuer = true,
         ValidateAudience = true,
         ValidateLifetime = true,
         ValidateIssuerSigningKey = true,
